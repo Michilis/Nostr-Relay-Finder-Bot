@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const validateNpub = require('../utils/validateNpub');
 
 module.exports = async (bot, msg, npub) => {
   const chatId = msg.chat.id;
