@@ -1,5 +1,7 @@
 const userService = require('../services/userService');
 const nostrService = require('../services/nostrService');
+const validateNpub = require('../utils/validateNpub');
+const formatResponse = require('../utils/formatResponse');
 
 module.exports = async (bot, msg, match) => {
   const chatId = msg.chat.id;
@@ -12,21 +14,21 @@ module.exports = async (bot, msg, match) => {
     const user = await userService.getUserById(userId);
     if (user) {
       const nostrInfo = await nostrService.getNostrInfo(user.npub);
-      bot.sendMessage(chatId, formatUserInfo(nostrInfo));
+      bot.sendMessage(chatId, formatResponse(nostrInfo));
     } else {
       bot.sendMessage(chatId, "You haven't set your Npub yet. Please set it using /setpub npub...");
     }
   } else if (input && validateNpub(input)) {
     // Case 2: /userinfo npub...
     const nostrInfo = await nostrService.getNostrInfo(input);
-    bot.sendMessage(chatId, formatUserInfo(nostrInfo));
+    bot.sendMessage(chatId, formatResponse(nostrInfo));
   } else if (usernameMention) {
     // Case 3: /userinfo @username
     const username = usernameMention.replace('@', '');
     const user = await userService.getUserByUsername(username);
     if (user) {
       const nostrInfo = await nostrService.getNostrInfo(user.npub);
-      bot.sendMessage(chatId, formatUserInfo(nostrInfo));
+      bot.sendMessage(chatId, formatResponse(nostrInfo));
     } else {
       bot.sendMessage(chatId, `No Npub data found for @${username}.`);
     }
